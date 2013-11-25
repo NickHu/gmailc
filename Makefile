@@ -1,5 +1,5 @@
 # gmailc version
-VERSION = 0.2
+VERSION = 0.2.1
 
 # Customize below to fit your system
 

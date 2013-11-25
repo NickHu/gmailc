@@ -28,18 +28,29 @@ int read_conf(char *path, char *username, char *password)
   FILE *conf = fopen(path, "r");
   if(conf != NULL)
   {
-    while(fgets(buffer, sizeof(buffer), conf) != NULL)
+    while(fgets(buffer, MAX_LINE, conf) != NULL)
     {
       if(buffer[0] == '#')
         continue;
 
-      char option[8];
+      char *option;
       char value[32];
-      count += sscanf(buffer, "%s %s", option, value);
-      if(!strncmp(option, "username", 8))
-        strncpy(username, value, MAX_USERNAME);
-      else if(!strncmp(option, "password", 8))
-        strncpy(password, value, MAX_PASSWORD);
+
+      option = strstr(buffer, "username");
+      if(option)
+      {
+        strncpy(value, option + sizeof("username"), MAX_USERNAME);
+        ++count;
+        continue;
+      }
+
+      option = strstr(buffer, "password");
+      if(option)
+      {
+        strncpy(value, option + sizeof("password"), MAX_PASSWORD);
+        ++count;
+        continue;
+      }
     }
     fclose(conf);
     return count/2;
@@ -54,8 +65,8 @@ int read_conf(char *path, char *username, char *password)
 
 int main(int argc, char *argv[])
 {
-  char username[MAX_USERNAME];
-  char password[MAX_PASSWORD];
+  char username[MAX_USERNAME + 1];
+  char password[MAX_PASSWORD + 1];
   username[0] = '\0';
   password[0] = '\0';
   int parsed;

@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
   // read config
   char conf_path[50];
   snprintf(conf_path, sizeof(conf_path)
-          , "%s/%s", getenv("HOME"), ".gmailc.conf");
+          , "%s/%s/%s", getenv("HOME"), ".config", "gmailc.conf");
   parsed = read_conf(conf_path, username, password);
 
   // handle arguments

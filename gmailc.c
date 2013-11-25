@@ -30,7 +30,10 @@ int read_conf(char *path, char *username, char *password)
   {
     while(fgets(buffer, MAX_LINE, conf) != NULL)
     {
-      if(buffer[0] == '#')
+      int pos = 0;
+      while(buffer[pos] == ' ' || buffer[pos] == '\t')
+        ++pos;
+      if(buffer[pos] == '#')
         continue;
 
       char *option;

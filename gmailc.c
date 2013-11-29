@@ -21,10 +21,9 @@ void print_usage(char *bin_name)
   --version	Display version.\n");
 }
 
-int read_conf(char *path, char *username, char *password)
+void read_conf(char *path, char *username, char *password)
 {
   char buffer[MAX_LINE];
-  int count = 0;
   FILE *conf = fopen(path, "r");
   if(conf != NULL)
   {
@@ -37,48 +36,42 @@ int read_conf(char *path, char *username, char *password)
         continue;
 
       char *option;
-      char value[32];
 
       option = strstr(buffer, "username");
       if(option)
       {
-        strncpy(value, option + sizeof("username"), MAX_USERNAME);
-        ++count;
+        strncpy(username, option + sizeof("username"), MAX_USERNAME);
+        stripn(username);
         continue;
       }
 
       option = strstr(buffer, "password");
       if(option)
       {
-        strncpy(value, option + sizeof("password"), MAX_PASSWORD);
-        ++count;
+        strncpy(password, option + sizeof("password"), MAX_PASSWORD);
+        stripn(password);
         continue;
       }
     }
     fclose(conf);
-    return count/2;
   }
   else
   {
     if(verbose_flag)
       fprintf(stderr, "Failed to open file at: %s\n", path);
-    return 0;
   }
 }
 
 int main(int argc, char *argv[])
 {
-  char username[MAX_USERNAME + 1];
-  char password[MAX_PASSWORD + 1];
-  username[0] = '\0';
-  password[0] = '\0';
-  int parsed;
+  char username[MAX_USERNAME];
+  char password[MAX_PASSWORD];
 
   // read config
   char conf_path[50];
   snprintf(conf_path, sizeof(conf_path)
           , "%s/%s/%s", getenv("HOME"), ".config", "gmailc.conf");
-  parsed = read_conf(conf_path, username, password);
+  read_conf(conf_path, username, password);
 
   // handle arguments
   int c;
@@ -115,11 +108,9 @@ int main(int argc, char *argv[])
         break;
       case 'u':
         strncpy(username, optarg, MAX_USERNAME);
-        ++parsed;
         break;
       case 'p':
         strncpy(password, optarg, MAX_PASSWORD);
-        ++parsed;
         break;
       case 'v':
         verbose_flag = 1;
@@ -139,16 +130,37 @@ int main(int argc, char *argv[])
     }
   }
 
-  if(!parsed)
+  if(*username == '\0')
   {
-    puts("No username or password");
+    puts("No username");
     exit(1);
   }
 
-  if(verbose_flag)
-    printf("username: %s\npassword: %s\n", username, password);
+  if(*password == '\0')
+  {
+    puts("No password");
+    exit(1);
+  }
 
-  printf("%d\n", xml_fullcount(get_mail_xml(username, password)));
+  struct XML mail_xml;
+  mail_xml = get_mail_xml(username, password);
+
+  if(verbose_flag)
+  {
+    printf("username: %s\n"
+           "password: %s\n"
+           "\n",
+          username, password);
+
+    printf("Raw XML:\n"
+           "%s\n"
+           "\n"
+           "Size: %d\n"
+           "\n",
+          mail_xml.data, (int) mail_xml.size);
+  }
+
+  printf("%d\n", xml_fullcount(mail_xml));
 
   return 0;
 }

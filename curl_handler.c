@@ -10,7 +10,7 @@ static size_t curl_write(char *ptr, size_t size, size_t nmemb, void *data)
   size_t real_size = size * nmemb;
   struct XML *xml = (struct XML *) data;
 
-  xml->data = realloc(xml->data, xml->size + real_size + 1);
+  xml->data = realloc(xml->data, xml->size + real_size);
   if(xml->data == NULL)
   {
     /* out of memory */
@@ -20,7 +20,7 @@ static size_t curl_write(char *ptr, size_t size, size_t nmemb, void *data)
 
   memcpy(&(xml->data[xml->size]), ptr, real_size);
   xml->size += real_size;
-  xml->data[xml->size] = 0;
+  xml->data[xml->size - 1] = '\0';
 
   return real_size;
 }
@@ -61,6 +61,5 @@ struct XML get_mail_xml(char *username, char *password)
 
   assert(xml_data.data);
 
-  /* printf("Raw XML:\n%s", xml_data.data); */
   return xml_data;
 }

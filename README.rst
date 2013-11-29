@@ -24,7 +24,7 @@ Usage
 
 .. code:: bash
 
-  Usage: ./gmailc [options] 
+  Usage: gmailc [options] 
   Options:
     -h, --help  Print this message and exit.
     -p, --password  Specify a password.
@@ -35,5 +35,4 @@ Usage
 TODO
 ====
 
-* Fix verbose mode
 * Write manpage

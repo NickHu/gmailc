@@ -13,12 +13,12 @@ static int verbose_flag;
 void print_usage(char *bin_name)
 {
   printf("Usage: %s [options] \n", bin_name);
-  printf("Options:\n\
-  -h, --help	Print this message and exit.\n\
-  -p, --password	Specify a password.\n\
-  -u, --username	Specify a username.\n\
-  -v, --verbose	Enable verbose mode.\n\
-  --version	Display version.\n");
+  printf("Options:\n"
+  "\t-h, --help	Print this message and exit.\n"
+  "\t-p, --password	Specify a password.\n"
+  "\t-u, --username	Specify a username.\n"
+  "\t-v, --verbose	Enable verbose mode.\n"
+  "\t--version	Display version.\n");
 }
 
 void read_conf(char *path, char *username, char *password)
@@ -41,7 +41,7 @@ void read_conf(char *path, char *username, char *password)
       if(option)
       {
         strncpy(username, option + sizeof("username"), MAX_USERNAME);
-        stripn(username);
+        STRIPN(username);
         continue;
       }
 
@@ -49,7 +49,7 @@ void read_conf(char *path, char *username, char *password)
       if(option)
       {
         strncpy(password, option + sizeof("password"), MAX_PASSWORD);
-        stripn(password);
+        STRIPN(password);
         continue;
       }
     }
@@ -133,13 +133,13 @@ int main(int argc, char *argv[])
   if(*username == '\0')
   {
     puts("No username");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if(*password == '\0')
   {
     puts("No password");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   struct XML mail_xml;

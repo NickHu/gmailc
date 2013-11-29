@@ -63,3 +63,4 @@ struct XML get_mail_xml(char *username, char *password)
 
   return xml_data;
 }
+

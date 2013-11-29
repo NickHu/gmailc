@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdbool.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -6,6 +7,7 @@
 
 int xml_fullcount(struct XML xml)
 {
+  bool failed = false;
   xmlDocPtr doc;
   xmlNode *root_element = NULL;
   doc = xmlReadMemory(xml.data, xml.size, "noname.xml", NULL, 0);
@@ -13,16 +15,34 @@ int xml_fullcount(struct XML xml)
   if(doc == NULL)
   {
     fprintf(stderr, "Failed to parse XML.\n");
-    return 0;
+    failed = true;
   }
   root_element = xmlDocGetRootElement(doc);
 
-  int fullcount = 0;
+  // A HTML 401 is returned if authentication is invalid
+  if(!strncmp((char *) root_element->name, "HTML", sizeof("HTML")))
+    if(!strncmp(
+      (char *) xmlNodeGetContent(
+        // TITLE tag
+        xmlFirstElementChild(xmlFirstElementChild(root_element))),
+      "Unauthorized",
+      sizeof("Unauthorized")))
+    {
+      fprintf(stderr, "Authentication failed\n");
+      failed = true;
+    }
+
+  int fullcount;
   xmlNode *cur_node = NULL;
 
-  for (cur_node = root_element->children; cur_node; cur_node = cur_node->next) {
-    if (cur_node->type == XML_ELEMENT_NODE) {
-      if(!strncmp((char *) cur_node->name, "fullcount", 9))
+  for(cur_node = xmlFirstElementChild(root_element);
+      cur_node;
+      cur_node = cur_node->next)
+  {
+    if(cur_node->type == XML_ELEMENT_NODE)
+    {
+      if(!strncmp((char *) cur_node->name,
+          "fullcount", sizeof("fullcount")))
       {
         xmlChar *xml_count = xmlNodeGetContent(cur_node);
         sscanf((char *) xml_count, "%d", &fullcount);
@@ -32,6 +52,10 @@ int xml_fullcount(struct XML xml)
   }
   xmlFreeDoc(doc);
   xmlCleanupParser();
+
+  if(failed)
+    exit(EXIT_FAILURE);
+
   return fullcount;
 }
 

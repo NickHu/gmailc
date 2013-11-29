@@ -4,3 +4,4 @@
 int xml_fullcount(struct XML xml);
 
 #endif
+

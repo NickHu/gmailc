@@ -1,7 +1,7 @@
 #ifndef _util_h
 #define _util_h
 
-#define stripn(x) (x)[strlen((x)) - 1] = '\0'
+#define STRIPN(x) (x)[strlen((x)) - 1] = '\0'
 
 static int const MAX_LINE = 100;
 static int const MAX_USERNAME = 30;
@@ -14,3 +14,4 @@ struct XML
 };
 
 #endif
+

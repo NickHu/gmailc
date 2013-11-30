@@ -41,9 +41,9 @@ struct XML get_mail_xml(char *username, char *password)
   if(curl)
   {
     char url[100];
-    snprintf(url, sizeof(url)
-            , "https://%s:%s@mail.google.com/mail/feed/atom"
-            , username, password);
+    snprintf(url, sizeof(url),
+            "https://%s:%s@mail.google.com/mail/feed/atom",
+            username, password);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
 

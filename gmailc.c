@@ -160,6 +160,12 @@ int main(int argc, char *argv[])
           mail_xml.data, (int) mail_xml.size);
   }
 
+  if(!mail_xml.size)
+  {
+    fprintf(stderr, "No XML\n");
+    exit(EXIT_FAILURE);
+  }
+
   printf("%d\n", xml_fullcount(mail_xml));
 
   return 0;

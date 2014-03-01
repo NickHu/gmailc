@@ -20,7 +20,7 @@ static size_t curl_write(char *ptr, size_t size, size_t nmemb, void *data)
 
   memcpy(&(xml->data[xml->size]), ptr, real_size);
   xml->size += real_size;
-  xml->data[xml->size - 1] = '\0';
+  xml->data[xml->size] = 0;
 
   return real_size;
 }

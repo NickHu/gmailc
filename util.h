@@ -3,9 +3,9 @@
 
 #define STRIPN(x) (x)[strlen((x)) - 1] = '\0'
 
-static int const MAX_LINE = 100;
-static int const MAX_USERNAME = 30;
-static int const MAX_PASSWORD = 18;
+static const int MAX_LINE = 100;
+static const int MAX_USERNAME = 30;
+static const int MAX_PASSWORD = 18;
 
 struct XML
 {

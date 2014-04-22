@@ -3,6 +3,8 @@
 #include <string.h>
 #include <curl/curl.h>
 
+#include "curl_handler.h"
+
 #include "util.h"
 
 static size_t curl_write(char *ptr, size_t size, size_t nmemb, void *data)
@@ -43,7 +45,7 @@ struct XML get_mail_xml(char *username, char *password)
     char url[100];
     snprintf(url, sizeof(url),
             "https://%s:%s@mail.google.com/mail/feed/atom",
-            username, password);
+            url_encode(username), url_encode(password));
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
 
@@ -64,3 +66,29 @@ struct XML get_mail_xml(char *username, char *password)
   return xml_data;
 }
 
+char *url_encode(char *string)
+{
+  // TODO: handle more than @ if this ever becomes necessary
+  const char delim[] = "@";
+  int at_count = 0;
+  for(int i = 0; string[i]; ++i)
+    if(string[i] == '@')
+      ++at_count;
+
+  // @ => %40, hence 1 character becomes 3 characters in the new buffer
+  const size_t encoded_size = strlen(string) + 2 * at_count;
+  char *encoded = malloc(encoded_size);
+  encoded[0] = '\0';
+
+  char *token = strtok(string, delim);
+
+  while(token != NULL)
+  {
+    strncat(encoded, token, encoded_size - strlen(encoded));
+    char *next = strtok(NULL, delim);
+    if(next)
+      strncat(encoded, "%40", sizeof("%40"));
+    token = next;
+  }
+  return encoded;
+}

@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
   while(1)
   {
-    static struct option long_options[] =
+    static const struct option long_options[] =
     {
       {"verbose", no_argument, &verbose_flag, 1},
       {"help", no_argument, 0, 'h'},
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
            "\n"
            "Size: %d\n"
            "\n",
-          mail_xml.data, (int) mail_xml.size);
+          mail_xml.data, (unsigned int) mail_xml.size);
   }
 
   if(!mail_xml.size)
